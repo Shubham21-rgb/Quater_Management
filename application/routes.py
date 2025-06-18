@@ -458,11 +458,11 @@ def entrybill():
         #if body['initial_reading_1'] and body['final_reading_1']:
         diff_read_1=float(body['final_reading_1'])-float(body['initial_reading_1'])
         #if body['initial_reading_1'] and body['final_reading_1'] and body['unit1']:
-        elec_charge=(float(body['unit1'])*diff_read_1)+float((body['meter_rent_1']))
+        elec_charge=round((float(body['unit1'])*diff_read_1)+float((body['meter_rent_1'])),2)
         #if body['common_initial_reading_2'] and body['common_final_reading_2']:
         diff_read_2=float(body['common_final_reading_2'])-float(body['common_initial_reading_2'])
         #if body['common_initial_reading_2'] and body['common_final_reading_2'] and body['unit2']:
-        elec_charge_2=float(body['unit2'])*diff_read_2+float((body['common_meter_rent_2']))
+        elec_charge_2 = round(float(body['unit2']) * diff_read_2 + float(body['common_meter_rent_2']),2)
         #if elec_charge and elec_charge_2:
         total_bill=elec_charge+elec_charge_2
         #if total_bill and body['licence_fee'] and body['water_charge'] and body['coopt_electric_charge'] and body['grg_charge'] and body['other_charges']:
