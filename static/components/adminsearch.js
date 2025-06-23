@@ -40,7 +40,7 @@ export default {
                                     <th scope="col">Area </th>
                                     <th scope="col">Date Of Allotment</th>
                                     <th scope="col">Year Of Construction</th>
-                                    <th scope="col">Remarks</th>
+                                    <th scope="col">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -51,7 +51,7 @@ export default {
                                     <td>{{t.Area}}</td>
                                     <td>{{t.Date_of_allotment}}</td>
                                     <td>{{t.Year_of_construction}}</td>
-                                    <td>{{t.Remarks}}</td>
+                                    <td>{{t.Status}}</td>
                                 </tbody>
                             </table>
                         </div>

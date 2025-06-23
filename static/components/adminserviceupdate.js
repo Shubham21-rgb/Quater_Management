@@ -50,8 +50,8 @@ export default{
                     <input type="text" class="form-control" id="amount" v-model="date.Year_of_construction">
                 </div>
                 <div class="mb-3">
-                    <label for="type" class="form-label"> Remarks</label>
-                    <input type="text" class="form-control" id="amount" v-model="date.Remarks">
+                    <label for="type" class="form-label"> Status</label>
+                    <input type="text" class="form-control" id="amount" v-model="date.Status">
                 </div>
                 <button class="btn btn-success" @click="save">Save+</button>
                 <router-link to="/adminupdate" class="btn btn-warning">Back</router-link>

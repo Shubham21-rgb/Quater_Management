@@ -38,7 +38,7 @@ export default {
                                     <th scope="col" class="px-4">Date-Of-Allotment</th>
                                     <th scope="col" class="px-4">Date Of Vacation</th>
                                     <th scope="col" class="px-4">Year-Of Construction</th>
-                                    <th scope="col" class="px-4">Remarks</th>
+                                    <th scope="col" class="px-4">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -50,7 +50,7 @@ export default {
                                     <td class="px-4">{{t.Date_of_allotment}}</td>
                                     <td class="px-4">{{t.Date_Of_Vacation}}</td>
                                     <td class="px-4">{{t.Year_of_construction}}</td>
-                                    <td class="px-4">{{t.Remarks}}</td>
+                                    <td class="px-4">{{t.Status}}</td>
                                 </tbody>
                             </table>
                         </div>

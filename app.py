@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask  
 from application.database import db
 from application.models import *
 from application.config import LocalDevelopmentConfig
@@ -80,7 +80,7 @@ for _, row in df.iterrows():
 
 db.session.commit()
 
-df2= pd.read_csv("NITquater1.csv")
+df2= pd.read_csv("NITquater12.csv")
 for _, row in df2.iterrows():
     r=Quater_List(
         id=row['Sl.No'],
@@ -90,7 +90,7 @@ for _, row in df2.iterrows():
         Area=row['Area'],
         Date_of_allotment=row['Date of allotment'],
         Year_of_construction=row['Year of const'],
-        Remarks=row['Remarks']
+        Status=row['Status']
     )
     db.session.add(r)
 db.session.commit()'''

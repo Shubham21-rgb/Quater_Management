@@ -32,7 +32,7 @@ class TransApi(Resource):
             this_trans["Date_of_allotment"]=transaction.Date_of_allotment
             this_trans["Date_Of_Vacation"]=transaction.Date_Of_Vacation
             this_trans["Year_of_construction"]=transaction.Year_of_construction
-            this_trans["Remarks"]=transaction.Remarks
+            this_trans["Status"]=transaction.Status
             trans_json.append(this_trans)
         if trans_json:
             return jsonify(trans_json)

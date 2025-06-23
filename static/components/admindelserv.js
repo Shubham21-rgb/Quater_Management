@@ -45,7 +45,7 @@ export default {
                                     <th scope="col">Date Of Allotment</th>
                                     <th scope="col">Date Of Vacation</th>
                                     <th scope="col">Year Of Construction</th>   
-                                    <th scope="col">Remarks</th>
+                                    <th scope="col">Status</th>
                                     <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
@@ -58,7 +58,7 @@ export default {
                                     <td>{{t.Date_of_allotment}}</td>
                                     <td>{{t.Date_Of_Vacation}}</td>
                                     <td>{{t.Year_of_construction}}</td>
-                                    <td>{{t.Remarks}}</td>
+                                    <td>{{t.Status}}</td>
                                     <td><router-link :to="{name:'adminserv',params:{id: t.id,name:t.name,Designation:t.Designation,Date_of_allotment:t.Date_of_allotment,Type_of_Quater:t.Type_of_Quater,Area:t.Area,Date_Of_Vacation:t.Date_Of_Vacation,Year_of_construction:t.Year_of_construction}}" class="btn btn-warning">Update</router-link></td>
                                     <td><router-link :to="{name:'deletebillsnew',params:{id: t.id,staff_name:t.name,staff_code:t.Type_of_Quater}}" class="btn btn-danger">Delete</router-link></td>
                                 </tbody>

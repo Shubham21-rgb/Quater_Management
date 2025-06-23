@@ -2,7 +2,7 @@ from flask import current_app as app,jsonify,request,render_template,Response
 from flask_security import auth_required, roles_required,current_user,login_user,roles_accepted
 from application.database import db
 from werkzeug.security import check_password_hash,generate_password_hash
-import pandas as pd
+import pandas as pd 
 import io
 import datetime
 import uuid
@@ -382,7 +382,7 @@ def adminser():
         profess["Area"]=role.Area
         profess["Date_of_allotment"]=role.Date_of_allotment
         profess["Year_of_construction"]=role.Year_of_construction
-        profess["Remarks"]=role.Remarks
+        profess["Status"]=role.Status
         tran.append(profess)
     if tran:
         return tran
@@ -398,7 +398,7 @@ def download_csv():
 
     # Convert received list of dicts to DataFrame
     df = pd.DataFrame(data)
-    desired_order = ['name', 'Designation', 'Type_of_Quater', 'Area', 'Date_of_allotment','Date_Of_Vacation', 'Year_of_construction', 'Remarks']
+    desired_order = ['name', 'Designation', 'Type_of_Quater', 'Area', 'Date_of_allotment','Date_Of_Vacation', 'Year_of_construction', 'Status']
     df = df[[col for col in desired_order if col in df.columns]]
     # Write DataFrame to a CSV string
     output = io.StringIO()
@@ -648,7 +648,7 @@ def adminsearchin():
             profess["Date_of_allotment"]=role.Date_of_allotment
             profess["Date_Of_Vacation"]=role.Date_Of_Vacation
             profess["Year_of_construction"]=role.Year_of_construction
-            profess["Remarks"]=role.Remarks
+            profess["Status"]=role.Status
             tran.append(profess)
 
     elif body['filter']=='dg':
@@ -663,7 +663,7 @@ def adminsearchin():
             profess["Date_of_allotment"]=role.Date_of_allotment
             profess["Date_Of_Vacation"]=role.Date_Of_Vacation
             profess["Year_of_construction"]=role.Year_of_construction
-            profess["Remarks"]=role.Remarks
+            profess["Status"]=role.Status
             tran.append(profess)
     elif body['filter']=='qt':
         ser = Quater_List.query.filter(Quater_List.Type_of_Quater.ilike(f"{body['search']}%")).all()
@@ -677,7 +677,7 @@ def adminsearchin():
             profess["Date_of_allotment"]=role.Date_of_allotment
             profess["Date_Of_Vacation"]=role.Date_Of_Vacation
             profess["Year_of_construction"]=role.Year_of_construction
-            profess["Remarks"]=role.Remarks
+            profess["Status"]=role.Status
             tran.append(profess)
     elif body['filter']=='area':
         ser = Quater_List.query.filter(Quater_List.Area.ilike(f"{body['search']}%")).all()
@@ -691,7 +691,7 @@ def adminsearchin():
             profess["Date_of_allotment"]=role.Date_of_allotment
             profess["Date_Of_Vacation"]=role.Date_Of_Vacation
             profess["Year_of_construction"]=role.Year_of_construction
-            profess["Remarks"]=role.Remarks
+            profess["Status"]=role.Status
             tran.append(profess)
     elif body['filter']=='doa':
         ser = Quater_List.query.filter(Quater_List.Date_of_allotment.ilike(f"{body['search']}%")).all()
@@ -705,7 +705,7 @@ def adminsearchin():
             profess["Date_of_allotment"]=role.Date_of_allotment
             profess["Date_Of_Vacation"]=role.Date_Of_Vacation
             profess["Year_of_construction"]=role.Year_of_construction
-            profess["Remarks"]=role.Remarks
+            profess["Status"]=role.Status
             tran.append(profess)
     elif body['filter']=='yoc':
         ser = Quater_List.query.filter(Quater_List.Year_of_construction.ilike(f"{body['search']}%")).all()
@@ -719,7 +719,7 @@ def adminsearchin():
             profess["Date_of_allotment"]=role.Date_of_allotment
             profess["Date_Of_Vacation"]=role.Date_Of_Vacation
             profess["Year_of_construction"]=role.Year_of_construction
-            profess["Remarks"]=role.Remarks
+            profess["Status"]=role.Status
             tran.append(profess)
 
     if tran:
@@ -759,7 +759,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
 
             elif body['filter1']=='Designation':
@@ -774,7 +774,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
             elif body['filter1']=='Type_of_Quater':
                 ser = Quater_List.query.filter(Quater_List.Type_of_Quater.ilike(f"{body['search1']}%")).all()
@@ -788,7 +788,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
             elif body['filter1']=='Area':
                 ser = Quater_List.query.filter(Quater_List.Area.ilike(f"{body['search1']}%")).all()
@@ -802,7 +802,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
             elif body['filter1']=='Date_of_allotment':
                 ser = Quater_List.query.filter(Quater_List.Date_of_allotment.ilike(f"{body['search1']}%")).all()
@@ -816,7 +816,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
             elif body['filter1']=='Year_of_construction':
                 ser = Quater_List.query.filter(Quater_List.Year_of_construction.ilike(f"{body['search1']}%")).all()
@@ -830,7 +830,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
         elif body['filter2']:
             if body['filter2']=='name':
@@ -845,7 +845,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
 
             elif body['filter2']=='Designation':
@@ -860,7 +860,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
             elif body['filter2']=='Type_of_Quater':
                 ser = Quater_List.query.filter(Quater_List.Type_of_Quater.ilike(f"{body['search2']}%")).all()
@@ -874,7 +874,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
             elif body['filter2']=='Area':
                 ser = Quater_List.query.filter(Quater_List.Area.ilike(f"{body['search2']}%")).all()
@@ -888,7 +888,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
             elif body['filter2']=='Date_of_allotment':
                 ser = Quater_List.query.filter(Quater_List.Date_of_allotment.ilike(f"{body['search2']}%")).all()
@@ -902,7 +902,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
             elif body['filter2']=='Year_of_construction':
                 ser = Quater_List.query.filter(Quater_List.Year_of_construction.ilike(f"{body['search2']}%")).all()
@@ -916,7 +916,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
             if tran:
                 return tran
@@ -943,7 +943,7 @@ def fooil():
                     profess["Date_of_allotment"]=role.Date_of_allotment
                     profess["Date_Of_Vacation"]=role.Date_Of_Vacation
                     profess["Year_of_construction"]=role.Year_of_construction
-                    profess["Remarks"]=role.Remarks
+                    profess["Status"]=role.Status
                     tran.append(profess)
 
             if tran:

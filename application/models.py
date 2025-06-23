@@ -26,7 +26,7 @@ class Quater_List(db.Model):
     Date_of_allotment=db.Column(db.String,nullable=False,unique=False)
     Year_of_construction=db.Column(db.String,nullable=False,unique=False)
     Date_Of_Vacation=db.Column(db.String,nullable=True,unique=False,default='Yet_to_be_updated')
-    Remarks=db.Column(db.String,nullable=False,unique=False,default='Yet_to_be_updated')
+    Status=db.Column(db.String,nullable=False,unique=False,default='Yet_to_be_updated')
 
 class QuartersBilling(db.Model):
     __tablename__ = 'quarters_billing'
