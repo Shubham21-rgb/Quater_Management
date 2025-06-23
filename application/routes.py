@@ -1,4 +1,4 @@
-from flask import current_app as app,jsonify,request,render_template,Response
+from flask import current_app as app,jsonify,request,render_template,Response,send_file
 from flask_security import auth_required, roles_required,current_user,login_user,roles_accepted
 from application.database import db
 from werkzeug.security import check_password_hash,generate_password_hash
@@ -6,6 +6,11 @@ import pandas as pd
 import io
 import datetime
 import uuid
+from fpdf import FPDF
+
+
+
+
 #from .resources import roles_list
 from .models import *
 from sqlalchemy import cast,Float
@@ -436,6 +441,135 @@ def download_csv1():
         headers={"Content-Disposition": f"attachment; filename={csv_file_name}"}
     )
 
+import pdfkit
+#PDF
+@app.route('/downloadbillpdf', methods=['POST'])
+def download_pdf():
+    column_layout = {
+        "Sl_no": "S.No",
+        "staff_code": "Staff ID",
+        "staff_name": "Employee Name",
+        "quarters_number": "Quarter No",
+        "licence_fee": "License Fee",
+        "meter_status": "Status",
+        "initial_reading_1": "Initial 1",
+        "final_reading_1": "Final 1",
+        "difference_reading_1": "Diff 1",
+        "meter_rent_1": "Meter Rent 1",
+        "electric_charge": "Elec. Charge",
+        "common_initial_reading_2": "Init 2",
+        "common_final_reading_2": "Final 2",
+        "difference_reading_2": "Diff 2",
+        "common_meter_rent_2": "Meter Rent 2",
+        "common_electric_charge": "Common Elec.",
+        "total_electricity_charges": "Total Elec.",
+        "water_charge": "Water",
+        "coopt_electric_charge": "Coopt Elec",
+        "grg_charge": "GRG",
+        "other_charges": "Others",
+        "net_amount": "Net"
+    }
+
+    data = request.get_json()
+    df = pd.DataFrame(data)
+    df = df[list(column_layout.keys())]
+    df.rename(columns=column_layout, inplace=True)
+
+    # Define column groups for subheaders
+    individual_cols = ["Initial 1", "Final 1", "Diff 1", "Meter Rent 1", "Elec. Charge"]
+    common_cols = ["Init 2", "Final 2", "Diff 2", "Meter Rent 2", "Common Elec."]
+    month = data[1]['Month']
+
+    # HTML signature block at end of page
+    signature_html = """
+<table style="width: 100%; margin-top: 50px; text-align: center; table-layout: fixed;">
+  <tr>
+    <td style="white-space: nowrap;">_________________________</td>
+    <td style="white-space: nowrap;">_________________________</td>
+    <td style="white-space: nowrap;">_________________________</td>
+  </tr>
+  <tr>
+    <td style="white-space: nowrap;">FIC (Estate Section)</td>
+    <td style="white-space: nowrap;">Assistant Registrar Estate Security</td>
+    <td style="white-space: nowrap;">Superintendent</td>
+  </tr>
+</table>
+
+<div style='page-break-after: always;'></div>
+"""
+
+    # Generate HTML table with subheaders
+    header_html = """
+    <thead>
+      <tr>
+        <th rowspan='2'>S.No</th>
+        <th rowspan='2'>Staff ID</th>
+        <th rowspan='2'>Employee Name</th>
+        <th rowspan='2'>Quarter No</th>
+        <th rowspan='2'>License Fee</th>
+        <th rowspan='2'>Status</th>
+        <th colspan='5'>Individual Meter</th>
+        <th colspan='5'>Common Meter</th>
+        <th rowspan='2'>Total Elec.</th>
+        <th rowspan='2'>Water</th>
+        <th rowspan='2'>Coopt Elec</th>
+        <th rowspan='2'>GRG</th>
+        <th rowspan='2'>Others</th>
+        <th rowspan='2'>Net</th>
+      </tr>
+      <tr>
+        <th>Initial</th><th>Final</th><th>Diff</th><th>Rent</th><th>Charge</th>
+        <th>Initial</th><th>Final</th><th>Diff</th><th>Rent</th><th>Charge</th>
+      </tr>
+    </thead>
+    """
+
+    # Break data into chunks of 20 rows to force page breaks
+    rows_per_page = 20
+    pages = [df.iloc[i:i+rows_per_page] for i in range(0, len(df), rows_per_page)]
+
+    full_table_html = ""
+    for page in pages:
+        full_table_html += "<table>" + header_html + "<tbody>"
+        for _, row in page.iterrows():
+            full_table_html += "<tr>"
+            for col in column_layout.values():
+                full_table_html += f"<td>{row[col]}</td>"
+            full_table_html += "</tr>"
+        full_table_html += "</tbody></table>"
+        full_table_html += signature_html
+    html_template = f'''
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        @page {{ size: A3 landscape; margin: 20mm; }}
+        body {{ font-family: Arial, sans-serif; font-size: 12pt; }}
+        table {{ border-collapse: collapse; width: 100%; page-break-inside: auto; margin-bottom: 20px; }}
+        th, td {{ border: 1px solid #000; padding: 6px; text-align: center; page-break-inside: avoid; }}
+        th {{ background-color: #f0f0f0; }}
+        thead {{ display: table-header-group; }}
+        tr {{ page-break-inside: avoid; }}
+      </style>
+    </head>
+    <body>
+      <h2 style="text-align:center;">Quarter Bill Report for the Month of {month}</h2>
+      {full_table_html}
+    </body>
+    </html>
+    '''
+
+    config = pdfkit.configuration(wkhtmltopdf=r'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
+    pdf_bytes = pdfkit.from_string(html_template, False, configuration=config)
+
+    filename = f"QuarterBill_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    return send_file(
+        io.BytesIO(pdf_bytes),
+        as_attachment=True,
+        download_name=filename,
+        mimetype='application/pdf'
+    )
 
 ####################################### Entery of New Billing Details #####################################
 

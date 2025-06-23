@@ -106,6 +106,9 @@ export default {
                          <button @click="csvd" class="btn btn-warning">
                             Download Report    <i class="bi bi-download"></i>
                         </button>
+                        <button @click="pdfd" class="btn btn-warning">
+                            Download PDF Report <i class="bi bi-download"></i>
+                        </button>
                 </div>
                     </div>
                     <router-link to="/quaterbill" class="btn btn-success">Back</router-link>
@@ -168,6 +171,37 @@ export default {
         document.body.appendChild(link);
         link.click();
         link.remove();
+    })
+},
+pdfd() {
+    fetch('/downloadbillpdf', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.transactions)
+    })
+    .then(async response => {
+        if (!response.ok) {
+            throw new Error("PDF generation failed.");
+        }
+
+        const disposition = response.headers.get("Content-Disposition") || "";
+        const filename = disposition.split("filename=")[1]?.replace(/['"]/g, '') || "report.pdf";
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        console.error("Error downloading PDF:", error);
+        alert("Failed to download the PDF. Please try again.");
     });
 }
                     }

@@ -24,15 +24,35 @@ with app.app_context():
     app.security.datastore.find_or_create_role(name="admin",description="super user of app ")
     app.security.datastore.find_or_create_role(name="user",description="Customer user of app ")
     db.session.commit()
-    if not app.security.datastore.find_user(email="Mastercontrol1@admin.com"):
-        app.security.datastore.create_user(username="Admin01",
-                                           email="Mastercontrol1@admin.com",
-                                           password=generate_password_hash("12345"),
+    if not app.security.datastore.find_user(email="admin1@admin.com"):
+        app.security.datastore.create_user(username="Subrata Chakraborty",
+                                           email="admin1@admin.com",
+                                           password=generate_password_hash("Nit@1234"),
                                            roles=['admin'])
-    if not app.security.datastore.find_user(email="Mastercontrol2@admin.com"):
-        app.security.datastore.create_user(username="Admin02",
-                                           email="Mastercontrol2@admin.com",
-                                           password=generate_password_hash("Nit123"),
+    if not app.security.datastore.find_user(email="admin2@admin.com"):
+        app.security.datastore.create_user(username="Ritwick Ghosh",
+                                           email="admin2@admin.com",
+                                           password=generate_password_hash("Nit@1234"),
+                                           roles=['admin'])
+    if not app.security.datastore.find_user(email="admin3@admin.com"):
+        app.security.datastore.create_user(username="A.K.Bhagat",
+                                           email="admin3@admin.com",
+                                           password=generate_password_hash("Nit@1234"),
+                                           roles=['admin'])
+    if not app.security.datastore.find_user(email="admin4@admin.com"):
+        app.security.datastore.create_user(username="User4",
+                                           email="admin4@admin.com",
+                                           password=generate_password_hash("Nit@1234"),
+                                           roles=['admin'])
+    if not app.security.datastore.find_user(email="admin5@admin.com"):
+        app.security.datastore.create_user(username="User5",
+                                           email="admin5@admin.com",
+                                           password=generate_password_hash("Nit@1234"),
+                                           roles=['admin'])
+    if not app.security.datastore.find_user(email="admin6@admin.com"):
+        app.security.datastore.create_user(username="User6",
+                                           email="admin6@admin.com",
+                                           password=generate_password_hash("Nit@1234"),
                                            roles=['admin'])
     db.session.commit()
 from application.routes import *
