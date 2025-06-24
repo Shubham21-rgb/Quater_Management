@@ -25,6 +25,7 @@ export default {
                                         <option value="Area">Area</option>
                                         <option value="Date_of_allotment">Date Of Allotment</option>
                                         <option value="Year_of_construction">Year Of Construction</option>
+                                        <option value="Status">Status</option>
                                     </select>
                                 </div>
                         </div>
@@ -40,6 +41,7 @@ export default {
                                         <option value="Area">Area</option>
                                         <option value="Date_of_allotment">Date Of Allotment</option>
                                         <option value="Year_of_construction">Year Of Construction</option>
+                                        <option value="Status">Status</option>
                                     </select>
                                 </div>
                         </div>
@@ -78,6 +80,9 @@ export default {
                         </div>
                         <button @click="csvd" class="btn btn-warning">
                              Download Report    <i class="bi bi-download"></i>
+                        </button>
+                        <button @click="pdfds" class="btn btn-warning">
+                             Download PDF Report    <i class="bi bi-download"></i>
                         </button>
                     </div>
                     <router-link to="/admin" class="btn btn-success">Back</router-link>
@@ -143,6 +148,24 @@ export default {
         link.click();
         link.remove();
     });
+},
+pdfds(){
+    fetch('/downloadquarterlistpdf', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(this.transactions)  // your data
+})
+.then(async response => {
+    if (!response.ok) throw new Error("Failed to generate PDF.");
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = "QuarterList.pdf";
+    link.click();
+    window.URL.revokeObjectURL(url);
+})
+.catch(err => alert("Download failed: " + err.message));
 }
                     }
                 }

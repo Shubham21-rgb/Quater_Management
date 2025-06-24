@@ -1,4 +1,4 @@
-from flask import Flask  
+from flask import Flask 
 from application.database import db
 from application.models import *
 from application.config import LocalDevelopmentConfig

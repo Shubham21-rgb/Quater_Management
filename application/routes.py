@@ -5,8 +5,7 @@ from werkzeug.security import check_password_hash,generate_password_hash
 import pandas as pd 
 import io
 import datetime
-import uuid
-from fpdf import FPDF
+
 
 
 
@@ -554,7 +553,7 @@ def download_pdf():
       </style>
     </head>
     <body>
-      <h2 style="text-align:center;">Quarter Bill Report for the Month of {month}</h2>
+      <h2 style="text-align:center;">Deduction of Licence Fee, Electricity Charges & Other charges for Institute Accommodation Month of {month}</h2>
       {full_table_html}
     </body>
     </html>
@@ -570,6 +569,115 @@ def download_pdf():
         download_name=filename,
         mimetype='application/pdf'
     )
+
+############################## PDF GENERATION OF Quater LIST ####################
+@app.route('/downloadquarterlistpdf', methods=['POST'])
+def download_quarter_list_pdf():
+
+    # Get data
+    data = request.get_json()
+    df = pd.DataFrame(data)
+
+    # Define column order and labels
+    column_order = [
+        "name", "Designation", "Type_of_Quater", "Area",
+        "Date_of_allotment", "Date_Of_Vacation",
+        "Year_of_construction", "Status"
+    ]
+    column_labels = {
+        "name": "Name",
+        "Designation": "Designation",
+        "Type_of_Quater": "Type of Quarter",
+        "Area": "Area",
+        "Date_of_allotment": "Date of Allotment",
+        "Date_Of_Vacation": "Date of Vacation",
+        "Year_of_construction": "Year of Construction",
+        "Status": "Status"
+    }
+    df = df[column_order]
+    df.rename(columns=column_labels, inplace=True)
+
+    # Logo path (adjust accordingly)
+    #logo_path = "file:///D:/Quater_Management/static/NITLOGO.png"
+
+    # Break data into pages
+    rows_per_page = 20
+    pages = [df.iloc[i:i+rows_per_page] for i in range(0, len(df), rows_per_page)]
+    quater=data[1]['Type_of_Quater']
+
+    # HTML table content
+    full_table_html = ""
+    for page in pages:
+        full_table_html += f"""
+        <div style='page-break-after: always;'>
+          <div style='text-align:center; margin-bottom:10px;'>
+          </div>
+          <div style="text-align: center; margin-bottom: 10px;">
+    <img src="file:///D:/Quater_Management/static/NITLOGO.png" style="width: 100%; max-width: 1000px;" alt="NIT Durgapur Header" />
+</div>
+
+          <h2 style="text-align:center;">Quarter List Report For {quater[0:2]} Type Quaters </h2>
+          <table>
+            <thead>
+              <tr>
+                {''.join(f"<th>{label}</th>" for label in column_labels.values())}
+              </tr>
+            </thead>
+            <tbody>
+        """
+        for _, row in page.iterrows():
+            full_table_html += "<tr>"
+            for col in column_labels.values():
+                full_table_html += f"<td>{row[col]}</td>"
+            full_table_html += "</tr>"
+        full_table_html += "</tbody></table></div>"
+
+    # Final HTML
+    html_template = f'''
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        @page {{ size: A3 landscape; margin: 20mm; }}
+        body {{ font-family: Arial, sans-serif; font-size: 11pt; }}
+        table {{ border-collapse: collapse; width: 100%; page-break-inside: auto; margin-bottom: 20px; }}
+        th, td {{ border: 1px solid #000; padding: 6px; text-align: center; }}
+        th {{ background-color: #f0f0f0; }}
+        thead {{ display: table-header-group; }}
+      </style>
+    </head>
+    <body>
+      {full_table_html}
+    </body>
+    </html>
+    '''
+
+    # PDF generation
+    config = pdfkit.configuration(wkhtmltopdf=r'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
+    pdf_bytes = pdfkit.from_string(html_template, False, configuration=config,options={"enable-local-file-access": ""})
+
+    # Return PDF
+    filename = f"QuarterList_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    return send_file(
+        io.BytesIO(pdf_bytes),
+        as_attachment=True,
+        download_name=filename,
+        mimetype='application/pdf'
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ####################################### Entery of New Billing Details #####################################
 
@@ -600,7 +708,7 @@ def entrybill():
         #if elec_charge and elec_charge_2:
         total_bill=elec_charge+elec_charge_2
         #if total_bill and body['licence_fee'] and body['water_charge'] and body['coopt_electric_charge'] and body['grg_charge'] and body['other_charges']:
-        final_bill_amt=float(body['licence_fee'])+total_bill+float(body['water_charge'])+float(body['coopt_electric_charge'])+float(body['grg_charge'])+float(body['other_charges'])
+        final_bill_amt=round(float(body['licence_fee'])+total_bill+float(body['water_charge'])+float(body['coopt_electric_charge'])+float(body['grg_charge'])+float(body['other_charges']),2)
 
 
         bill=QuartersBilling(staff_code=body['staff_code'],
@@ -966,6 +1074,21 @@ def fooil():
                     profess["Year_of_construction"]=role.Year_of_construction
                     profess["Status"]=role.Status
                     tran.append(profess)
+            elif body['filter1']=='Status':
+                ser = Quater_List.query.filter(Quater_List.Status.ilike(f"{body['search1']}%")).all()
+                for role in ser:
+                    profess={}
+                    profess["id"]=role.id
+                    profess["name"]=role.name 
+                    profess["Designation"]=role.Designation
+                    profess["Type_of_Quater"]=role.Type_of_Quater
+                    profess["Area"]=role.Area
+                    profess["Date_of_allotment"]=role.Date_of_allotment
+                    profess["Date_Of_Vacation"]=role.Date_Of_Vacation
+                    profess["Year_of_construction"]=role.Year_of_construction
+                    profess["Status"]=role.Status
+                    tran.append(profess)
+                
         elif body['filter2']:
             if body['filter2']=='name':
                 ser = Quater_List.query.filter(Quater_List.name.ilike(f"{body['search2']}%")).all()
@@ -1040,6 +1163,20 @@ def fooil():
                     tran.append(profess)
             elif body['filter2']=='Year_of_construction':
                 ser = Quater_List.query.filter(Quater_List.Year_of_construction.ilike(f"{body['search2']}%")).all()
+                for role in ser:
+                    profess={}
+                    profess["id"]=role.id
+                    profess["name"]=role.name 
+                    profess["Designation"]=role.Designation
+                    profess["Type_of_Quater"]=role.Type_of_Quater
+                    profess["Area"]=role.Area
+                    profess["Date_of_allotment"]=role.Date_of_allotment
+                    profess["Date_Of_Vacation"]=role.Date_Of_Vacation
+                    profess["Year_of_construction"]=role.Year_of_construction
+                    profess["Status"]=role.Status
+                    tran.append(profess)
+            elif body['filter2']=='Status':
+                ser = Quater_List.query.filter(Quater_List.Status.ilike(f"{body['search2']}%")).all()
                 for role in ser:
                     profess={}
                     profess["id"]=role.id
